@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tai Yi Shen Shu & BaZi Personal Forecast</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border: #334155;
+      --gold: #fbbf24;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
+      color: var(--accent);
+    }
+
+    p.subtitle {
+      margin: 0;
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: var(--gold);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    input, select {
+      background-color: var(--bg-color);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      background-color: rgba(56, 189, 248, 0.1);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .status-box {
+      background: rgba(15, 23, 42, 0.6);
+      border-left: 4px solid var(--accent);
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .btn-export {
+      background-color: var(--accent);
+      color: #0f172a;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-export:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .toast {
+      visibility: hidden;
+      min-width: 200px;
+      background-color: var(--gold);
+      color: #0f172a;
+      text-align: center;
+      border-radius: 6px;
+      padding: 10px;
+      position: fixed;
+      z-index: 1;
+      bottom: 30px;
+      font-weight: bold;
+    }
+
+    .toast.show {
+      visibility: visible;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Tai Yi Shen Shu & BaZi Dual Engine</h1>
+    <p class="subtitle">Macro World Cycles + Personal Energy Compatibility Calculator</p>
+  </header>
+
+  <div class="grid-2">
+    <!-- INPUT PANEL -->
+    <div class="card">
+      <h2>1. Enter Details</h2>
+      
+      <div class="form-group">
+        <label for="targetYear">Target Year to Analyze</label>
+        <input type="number" id="targetYear" value="2026" min="1900" max="2100" />
+      </div>
+
+      <div class="form-group">
+        <label for="birthDate">Your Date of Birth</label>
+        <input type="date" id="birthDate" value="1995-06-15" />
+      </div>
+
+      <div class="form-group">
+        <label for="birthTime">Your Time of Birth</label>
+        <input type="time" id="birthTime" value="12:00" />
+      </div>
+
+      <div class="form-group">
+        <label for="focusArea">Primary Focus Area</label>
+        <select id="focusArea">
+          <option value="Career & Business">Career & Business</option>
+          <option value="Wealth & Financial Planning">Wealth & Financial Planning</option>
+          <option value="Personal Development">Personal Development</option>
+          <option value="Relationships & Strategy">Relationships & Strategy</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- MACRO ENVIRONMENT PANEL -->
+    <div class="card">
+      <h2>2. Macro World Weather (Tai Yi)</h2>
+      <div id="macroBadge" class="badge">Calculating...</div>
+      
+      <div class="status-box">
+        <strong>Macro Energy Cycle:</strong>
+        <div id="macroCycleText">Defense & Consolidation Season</div>
+      </div>
+
+      <div class="status-box" style="margin-top: 10px;">
+        <strong>Strategic Stance:</strong>
+        <div id="macroStanceText">Host / Defender Advantage (Focus on internal stability over wild expansion)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERSONALIZED ANALYSIS PANEL -->
+  <div class="card">
+    <h2>3. Personalized Macro Synergy</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <div>
+        <span class="badge" style="border-color: var(--gold); color: var(--gold);">Personal Profile</span>
+        <div id="userProfileSummary" style="font-weight: bold; font-size: 1.1rem; margin-top: 4px;">
+          Birth Details Loaded
+        </div>
+      </div>
+      <div style="text-align: right; margin-top: 10px;">
+        <span style="font-size: 0.85rem; color: var(--text-sub);">Strategic Alignment</span>
+        <div id="synergyScore" style="font-size: 1.5rem; font-weight: bold; color: var(--gold);">85%</div>
+      </div>
+    </div>
+
+    <hr style="border-color: var(--border); margin: 15px 0;" />
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div>
+        <strong>💡 Key Personal Synergy Insight:</strong>
+        <p id="synergyInsightText" style="color: var(--text-sub); margin: 4px 0 0 0; font-size: 0.95rem;">
+          Your personal profile provides a stabilizing force against this year's macro cycle. Focus on leveraging structured execution and risk management.
+        </p>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <strong>🗓️ Recommended Execution Window:</strong>
+        <p id="windowText" style="color: var(--text-sub); margin: 4px 0 0 0; font-size: 0.95rem;">
+          Autumn months (August - October) favor peak execution and strategic negotiations.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT BUTTON -->
+  <button class="btn-export" onclick="copyGeminiPrompt()">
+    📋 Copy Custom Prompt for Gemini AI
+  </button>
+</div>
+
+<div id="toast" class="toast">Copied Prompt to Clipboard!</div>
+
+<script>
+  function updateDashboard() {
+    const year = document.getElementById('targetYear').value || 2026;
+    const birthDate = document.getElementById('birthDate').value || "1995-06-15";
+    const birthTime = document.getElementById('birthTime').value || "12:00";
+    const focus = document.getElementById('focusArea').value;
+
+    // Simplified Tai Yi Macro Logic based on year parity & epoch cycles
+    const isHostAdvantage = (year % 2 === 0);
+    const macroBadge = document.getElementById('macroBadge');
+    const macroCycleText = document.getElementById('macroCycleText');
+    const macroStanceText = document.getElementById('macroStanceText');
+
+    if (isHostAdvantage) {
+      macroBadge.innerText = `Tai Yi Year ${year}: Host Dominant`;
+      macroCycleText.innerText = "Defense & Consolidation Season";
+      macroStanceText.innerText = "Host Advantage: Prioritize depth, core competency, risk reduction, and fortifying existing assets.";
+    } else {
+      macroBadge.innerText = `Tai Yi Year ${year}: Guest Dominant`;
+      macroCycleText.innerText = "Active Expansion Season";
+      macroStanceText.innerText = "Guest Advantage: Favor strategic offense, pioneering new markets, launching ideas, and proactive calculated risk.";
+    }
+
+    // Format User Profile Display
+    document.getElementById('userProfileSummary').innerText = `${birthDate} at ${birthTime}`;
+    
+    // Pseudo-random deterministic synergy score based on date string + year
+    const seed = (new Date(birthDate).getTime() + parseInt(year)) % 25;
+    const synergy = 75 + seed;
+    document.getElementById('synergyScore').innerText = `${synergy}%`;
+
+    // Dynamic Synergy Insight
+    const insightText = document.getElementById('synergyInsightText');
+    const windowText = document.getElementById('windowText');
+
+    if (isHostAdvantage) {
+      insightText.innerText = `For your focus in ${focus}, the ${year} Host cycle rewards defensive depth. Your profile suggests building an unassailable foundation before taking major leaps.`;
+      windowText.innerText = "Q3 and Q4 offer the most stable conditions for solidifying contracts and consolidating gains.";
+    } else {
+      insightText.innerText = `For your focus in ${focus}, the ${year} Guest cycle provides outward momentum. Align your personal energy with proactive initiatives and outreach.`;
+      windowText.innerText = "Q1 and Q2 present strong windows for launching new projects and strategic moves.";
+    }
+  }
+
+  function copyGeminiPrompt() {
+    const year = document.getElementById('targetYear').value;
+    const birthDate = document.getElementById('birthDate').value;
+    const birthTime = document.getElementById('birthTime').value;
+    const focus = document.getElementById('focusArea').value;
+    const stance = document.getElementById('macroStanceText').innerText;
+    const synergy = document.getElementById('synergyScore').innerText;
+
+    const promptText = `Act as a professional Tai Yi Shen Shu & BaZi Metaphysical Consultant.
+
+Here are my details for analysis:
+- Target Analysis Year: ${year}
+- Personal Date of Birth: ${birthDate}
+- Personal Time of Birth: ${birthTime}
+- Primary Focus Area: ${focus}
+
+Calculated Dashboard Metrics:
+- Macro Tai Yi Stance for ${year}: ${stance}
+- Calculated Personal Alignment/Synergy: ${synergy}
+
+Based on these macro Tai Yi parameters and my BaZi birth chart details, please provide:
+1. A detailed 12-month strategic roadmap tailored to my focus in ${focus}.
+2. Three specific 'Power Moves' that align my personal birth chart energy with the ${year} macro weather.
+3. A risk assessment for any major career, financial, or personal pivots during this period.
+
+Keep the tone insightful, practical, and rooted in classical strategy.`;
+
+    navigator.clipboard.writeText(promptText).then(() => {
+      const toast = document.getElementById('toast');
+      toast.className = "toast show";
+      setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+    });
+  }
+
+  // Attach event listeners
+  document.getElementById('targetYear').addEventListener('input', updateDashboard);
+  document.getElementById('birthDate').addEventListener('change', updateDashboard);
+  document.getElementById('birthTime').addEventListener('change', updateDashboard);
+  document.getElementById('focusArea').addEventListener('change', updateDashboard);
+
+  // Initial load
+  updateDashboard();
+</script>
+
+</body>
+</html>
