@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tai Yi Shen Shu & BaZi Personal Forecast</title>
+  <title>Tai Yi Shen Shu & BaZi Dual Engine</title>
+  
+  <!-- Flatpickr Date/Time Picker CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
   <style>
     :root {
       --bg-color: #0f172a;
@@ -156,7 +161,7 @@
       border-radius: 6px;
       padding: 10px;
       position: fixed;
-      z-index: 1;
+      z-index: 10;
       bottom: 30px;
       font-weight: bold;
     }
@@ -189,13 +194,13 @@
       </div>
 
       <div class="form-group">
-        <label for="birthDate">Your Date of Birth</label>
-        <input type="date" id="birthDate" value="1995-06-15" />
+        <label for="birthDate">Your Date of Birth (Easier Year Picker)</label>
+        <input type="text" id="birthDate" placeholder="Select Birth Date..." value="1995-06-15" />
       </div>
 
       <div class="form-group">
         <label for="birthTime">Your Time of Birth</label>
-        <input type="time" id="birthTime" value="12:00" />
+        <input type="text" id="birthTime" placeholder="Select Time..." value="12:00" />
       </div>
 
       <div class="form-group">
@@ -246,16 +251,16 @@
 
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <div>
-        <strong>💡 Key Personal Synergy Insight:</strong>
+        <strong>💡 Key Personal Synergy Insight (<span id="focusDisplayTag" style="color:var(--accent);">Career & Business</span>):</strong>
         <p id="synergyInsightText" style="color: var(--text-sub); margin: 4px 0 0 0; font-size: 0.95rem;">
-          Your personal profile provides a stabilizing force against this year's macro cycle. Focus on leveraging structured execution and risk management.
+          Loading...
         </p>
       </div>
 
       <div style="margin-top: 10px;">
         <strong>🗓️ Recommended Execution Window:</strong>
         <p id="windowText" style="color: var(--text-sub); margin: 4px 0 0 0; font-size: 0.95rem;">
-          Autumn months (August - October) favor peak execution and strategic negotiations.
+          Loading...
         </p>
       </div>
     </div>
@@ -267,16 +272,40 @@
   </button>
 </div>
 
-<div id="toast" class="toast">Copied Prompt to Clipboard!</div>
+<div id="toast" class="toast">Copied Custom Prompt to Clipboard!</div>
+
+<!-- JS Libraries for UX Enhancements -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
+  // Initialize user-friendly date picker with fast year navigation dropdowns
+  const fpDate = flatpickr("#birthDate", {
+    dateFormat: "Y-m-d",
+    defaultDate: "1995-06-15",
+    monthSelectorType: "dropdown",
+    onChange: function() { updateDashboard(); }
+  });
+
+  // Initialize time picker
+  const fpTime = flatpickr("#birthTime", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    defaultDate: "12:00",
+    time_24hr: true,
+    onChange: function() { updateDashboard(); }
+  });
+
   function updateDashboard() {
     const year = document.getElementById('targetYear').value || 2026;
     const birthDate = document.getElementById('birthDate').value || "1995-06-15";
     const birthTime = document.getElementById('birthTime').value || "12:00";
     const focus = document.getElementById('focusArea').value;
 
-    // Simplified Tai Yi Macro Logic based on year parity & epoch cycles
+    // Update Focus Area Tag Display
+    document.getElementById('focusDisplayTag').innerText = focus;
+
+    // Tai Yi Macro Logic based on year parity & epoch cycles
     const isHostAdvantage = (year % 2 === 0);
     const macroBadge = document.getElementById('macroBadge');
     const macroCycleText = document.getElementById('macroCycleText');
@@ -295,21 +324,50 @@
     // Format User Profile Display
     document.getElementById('userProfileSummary').innerText = `${birthDate} at ${birthTime}`;
     
-    // Pseudo-random deterministic synergy score based on date string + year
+    // Deterministic synergy score based on date string + year
     const seed = (new Date(birthDate).getTime() + parseInt(year)) % 25;
-    const synergy = 75 + seed;
+    const synergy = 75 + (isNaN(seed) ? 10 : seed);
     document.getElementById('synergyScore').innerText = `${synergy}%`;
 
-    // Dynamic Synergy Insight
+    // Dynamic Focus-Specific Synergy Insights
     const insightText = document.getElementById('synergyInsightText');
     const windowText = document.getElementById('windowText');
 
+    const focusTactics = {
+      "Career & Business": {
+        host: "Focus on internal efficiency, skill mastery, and team stability rather than risky career hops or rapid expansion.",
+        guest: "Aggressively pursue new positions, business ventures, or market expansions while external momentum is high.",
+        hostWindow: "Q3 and Q4 offer the safest window for performance reviews, structural adjustments, and long-term planning.",
+        guestWindow: "Q1 and Q2 offer prime momentum for interviews, launching products, or pitching new ideas."
+      },
+      "Wealth & Financial Planning": {
+        host: "Prioritize capital preservation, debt reduction, and liquid reserves. High macro volatility penalizes speculative bets.",
+        guest: "Seek growth assets, strategic investments, or new income streams while market cycles favor proactive risk.",
+        hostWindow: "Q3 is ideal for auditing portfolios, refinancing, and setting conservative risk baselines.",
+        guestWindow: "Q2 provides the strongest macro leverage for executing calculated investment positions."
+      },
+      "Personal Development": {
+        host: "An ideal year for deep learning, inner cultivation, health routines, and perfecting your personal discipline.",
+        guest: "Focus on outward visibility, networking, public speaking, and stepping out of your comfort zone.",
+        hostWindow: "Late Summer to Autumn favors intensive study, retreats, and habit restructuring.",
+        guestWindow: "Spring and Early Summer favor workshops, social engagement, and public debuts."
+      },
+      "Relationships & Strategy": {
+        host: "Strengthen existing bonds, resolve outstanding conflicts, and establish clear operational boundaries.",
+        guest: "Form new strategic alliances, expand your professional network, and seek active partnerships.",
+        hostWindow: "Q4 is prime for deep alignment meetings, conflict resolution, and setting joint goals.",
+        guestWindow: "Q2 offers maximum social and strategic traction for making key connections."
+      }
+    };
+
+    const currentTactic = focusTactics[focus] || focusTactics["Career & Business"];
+
     if (isHostAdvantage) {
-      insightText.innerText = `For your focus in ${focus}, the ${year} Host cycle rewards defensive depth. Your profile suggests building an unassailable foundation before taking major leaps.`;
-      windowText.innerText = "Q3 and Q4 offer the most stable conditions for solidifying contracts and consolidating gains.";
+      insightText.innerText = `For ${focus}: ${currentTactic.host}`;
+      windowText.innerText = currentTactic.hostWindow;
     } else {
-      insightText.innerText = `For your focus in ${focus}, the ${year} Guest cycle provides outward momentum. Align your personal energy with proactive initiatives and outreach.`;
-      windowText.innerText = "Q1 and Q2 present strong windows for launching new projects and strategic moves.";
+      insightText.innerText = `For ${focus}: ${currentTactic.guest}`;
+      windowText.innerText = currentTactic.guestWindow;
     }
   }
 
@@ -320,10 +378,11 @@
     const focus = document.getElementById('focusArea').value;
     const stance = document.getElementById('macroStanceText').innerText;
     const synergy = document.getElementById('synergyScore').innerText;
+    const insight = document.getElementById('synergyInsightText').innerText;
 
     const promptText = `Act as a professional Tai Yi Shen Shu & BaZi Metaphysical Consultant.
 
-Here are my details for analysis:
+Here are my input parameters for strategic analysis:
 - Target Analysis Year: ${year}
 - Personal Date of Birth: ${birthDate}
 - Personal Time of Birth: ${birthTime}
@@ -331,14 +390,15 @@ Here are my details for analysis:
 
 Calculated Dashboard Metrics:
 - Macro Tai Yi Stance for ${year}: ${stance}
-- Calculated Personal Alignment/Synergy: ${synergy}
+- Personal Alignment / Synergy Score: ${synergy}
+- Initial Focus Guidance: ${insight}
 
-Based on these macro Tai Yi parameters and my BaZi birth chart details, please provide:
-1. A detailed 12-month strategic roadmap tailored to my focus in ${focus}.
-2. Three specific 'Power Moves' that align my personal birth chart energy with the ${year} macro weather.
-3. A risk assessment for any major career, financial, or personal pivots during this period.
+Based on these macro Tai Yi parameters combined with my BaZi birth profile, please provide:
+1. A tailored 12-month strategic roadmap specifically focused on ${focus}.
+2. Three specific 'Power Moves' that leverage my personal energy against the ${year} macro weather.
+3. Key operational risks to mitigate given the ${year} stance.
 
-Keep the tone insightful, practical, and rooted in classical strategy.`;
+Keep the response practical, actionable, and structured in clear steps.`;
 
     navigator.clipboard.writeText(promptText).then(() => {
       const toast = document.getElementById('toast');
@@ -347,13 +407,11 @@ Keep the tone insightful, practical, and rooted in classical strategy.`;
     });
   }
 
-  // Attach event listeners
+  // Attach event listeners for real-time interactivity
   document.getElementById('targetYear').addEventListener('input', updateDashboard);
-  document.getElementById('birthDate').addEventListener('change', updateDashboard);
-  document.getElementById('birthTime').addEventListener('change', updateDashboard);
   document.getElementById('focusArea').addEventListener('change', updateDashboard);
 
-  // Initial load
+  // Initial calculation load
   updateDashboard();
 </script>
 
